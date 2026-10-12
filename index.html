@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PulseCheck — a simulated DevOps server status dashboard.">
+  <title>PulseCheck · Server Status Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to dashboard</a>
+
+  <div class="app-bg" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28" focusable="false">
+          <rect x="2" y="2" width="28" height="28" rx="8" fill="none" stroke="currentColor" stroke-width="2"/>
+          <polyline points="6,18 11,18 13,10 17,22 19,14 22,18 26,18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <div>
+        <p class="brand-kicker">Observability</p>
+        <h1>PulseCheck</h1>
+      </div>
+    </div>
+
+    <div class="header-meta">
+      <p class="sim-badge" role="status">
+        <span class="sim-dot" aria-hidden="true"></span>
+        Simulated telemetry · not connected to a live host
+      </p>
+      <p class="clock" id="clock" aria-live="off"></p>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="toolbar" aria-labelledby="cluster-heading">
+      <div>
+        <h2 id="cluster-heading">Cluster · prod-east-1</h2>
+        <p class="muted">
+          Last refresh:
+          <time id="last-updated" datetime="">—</time>
+        </p>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="btn-pause" aria-pressed="false">
+          Pause updates
+        </button>
+        <button type="button" id="btn-refresh">Refresh now</button>
+        <button type="button" id="btn-incident" class="danger">
+          Simulate incident
+        </button>
+        <button type="button" id="btn-recover" class="success" disabled>
+          Recover services
+        </button>
+      </div>
+    </section>
+
+    <p id="live-region" class="sr-only" aria-live="polite"></p>
+
+    <section class="metrics" aria-label="Resource metrics">
+      <article class="card metric-card" data-metric="cpu">
+        <header class="card-head">
+          <h3>CPU Usage</h3>
+          <span class="chip" id="cpu-chip">Nominal</span>
+        </header>
+        <p class="metric-value" id="cpu-value">—</p>
+        <div class="meter" aria-hidden="true">
+          <div class="meter-fill" id="cpu-meter"></div>
+        </div>
+        <p class="metric-sub" id="cpu-sub">8 vCPU · load average updating</p>
+      </article>
+
+      <article class="card metric-card" data-metric="memory">
+        <header class="card-head">
+          <h3>Memory Usage</h3>
+          <span class="chip" id="mem-chip">Nominal</span>
+        </header>
+        <p class="metric-value" id="mem-value">—</p>
+        <div class="meter" aria-hidden="true">
+          <div class="meter-fill" id="mem-meter"></div>
+        </div>
+        <p class="metric-sub" id="mem-sub">32 GB RAM allocated</p>
+      </article>
+
+      <article class="card metric-card" data-metric="disk">
+        <header class="card-head">
+          <h3>Disk Usage</h3>
+          <span class="chip" id="disk-chip">Nominal</span>
+        </header>
+        <p class="metric-value" id="disk-value">—</p>
+        <div class="meter" aria-hidden="true">
+          <div class="meter-fill" id="disk-meter"></div>
+        </div>
+        <p class="metric-sub" id="disk-sub">480 GB NVMe volume</p>
+      </article>
+
+      <article class="card metric-card" data-metric="uptime">
+        <header class="card-head">
+          <h3>Server Uptime</h3>
+          <span class="chip chip-ok" id="uptime-chip">Stable</span>
+        </header>
+        <p class="metric-value" id="uptime-value">—</p>
+        <p class="metric-sub" id="uptime-sub">Process started at boot</p>
+      </article>
+    </section>
+
+    <div class="grid-2">
+      <section class="card" aria-labelledby="health-heading">
+        <header class="card-head">
+          <h2 id="health-heading">Server health overview</h2>
+          <span class="chip" id="cluster-chip">All systems operational</span>
+        </header>
+
+        <ul class="service-list" id="service-list">
+          <li class="service" data-service="api">
+            <span class="status-dot" id="api-dot" aria-hidden="true"></span>
+            <div>
+              <p class="service-name">API Server</p>
+              <p class="service-meta" id="api-meta">Listening on :443</p>
+            </div>
+            <span class="service-state" id="api-state">Healthy</span>
+          </li>
+          <li class="service" data-service="db">
+            <span class="status-dot" id="db-dot" aria-hidden="true"></span>
+            <div>
+              <p class="service-name">Database</p>
+              <p class="service-meta" id="db-meta">Primary replica in sync</p>
+            </div>
+            <span class="service-state" id="db-state">Healthy</span>
+          </li>
+          <li class="service" data-service="auth">
+            <span class="status-dot" id="auth-dot" aria-hidden="true"></span>
+            <div>
+              <p class="service-name">Authentication Service</p>
+              <p class="service-meta" id="auth-meta">Token issuance normal</p>
+            </div>
+            <span class="service-state" id="auth-state">Healthy</span>
+          </li>
+          <li class="service" data-service="workers">
+            <span class="status-dot" id="workers-dot" aria-hidden="true"></span>
+            <div>
+              <p class="service-name">Background Workers</p>
+              <p class="service-meta" id="workers-meta">4 of 4 consumers online</p>
+            </div>
+            <span class="service-state" id="workers-state">Healthy</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="card chart-card" aria-labelledby="chart-heading">
+        <header class="card-head">
+          <h2 id="chart-heading">Resource usage (last 20 samples)</h2>
+          <ul class="legend" aria-hidden="true">
+            <li><span class="swatch cpu"></span> CPU</li>
+            <li><span class="swatch mem"></span> Memory</li>
+            <li><span class="swatch disk"></span> Disk</li>
+          </ul>
+        </header>
+
+        <canvas
+          id="usage-chart"
+          role="img"
+          aria-labelledby="chart-heading"
+          aria-describedby="chart-table-caption"
+          width="720"
+          height="280"
+        ></canvas>
+
+        <div class="sr-only">
+          <table>
+            <caption id="chart-table-caption">Tabular values for the usage chart, newest sample last.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Sample</th>
+                <th scope="col">CPU %</th>
+                <th scope="col">Memory %</th>
+                <th scope="col">Disk %</th>
+              </tr>
+            </thead>
+            <tbody id="chart-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <section class="card log-card" aria-labelledby="log-heading">
+      <header class="card-head">
+        <h2 id="log-heading">Recent activity</h2>
+        <button type="button" id="btn-clear-log" class="ghost">Clear log</button>
+      </header>
+      <ol class="activity" id="activity-log" reversed></ol>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>PulseCheck dashboard · all metrics and events on this page are simulated for demonstration.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
